@@ -1,0 +1,32 @@
+version: 2
+jobs:
+    build:
+        docker:
+            - image: circleci/php:7.3-browsers
+
+        steps:
+            - checkout
+            - run:
+                name: Pull submodules
+                command: |
+                    git submodule init
+                    git submodule update --remote
+
+            - setup_remote_docker:
+                docker_layer_caching: true
+
+            - run:
+                name: Start containers and verify it's running
+                command: |
+                    set -x
+                    docker-compose -f docker/docker-compose.yml up -d
+
+            - run:
+                name: Composer install
+                command: |
+                    composer install -n --prefer-dist
+
+            - run:
+                name: Run tests!
+                command: |
+                    ./docker/workspace.sh vendor/bin/phpunit --bootstrap vendor/autoload.php tests
