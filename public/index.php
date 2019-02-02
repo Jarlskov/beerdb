@@ -1,8 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 require __DIR__ .'/../vendor/autoload.php';
 
-use Symfony\Component\HttpFoundation\Request;
+use Jarlskov\Framework\Kernel;
+use Zend\Diactoros\ServerRequestFactory;
 
-$request = Request::createFromGlobals();
-die(var_dump($request));
+$providers = [
+];
+
+(new Kernel($providers))->dispatch(ServerRequestFactory::fromGlobals());
